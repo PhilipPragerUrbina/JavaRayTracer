@@ -2,6 +2,7 @@ package simulation.Ray;
 
 import simulation.Alg.Vector3;
 import simulation.IO.Image;
+import simulation.IO.PixelDisplay;
 import simulation.Ray.Tracables.Sphere;
 import simulation.Ray.Tracables.Traceable;
 import simulation.Ray.Tracables.TraceableWorld;
@@ -13,9 +14,9 @@ public class RayTracer {
     final static  int RESOLUTION = 1000;
     public static void main(String[] args) {
 
-        Image output = new Image(RESOLUTION,RESOLUTION);    //image to output to
+        PixelDisplay output = new Image(RESOLUTION,RESOLUTION,"render.jpg");    //image to output to
         TraceableWorld world = getWorld(); //world to trace into
-        Camera camera = new Camera(new Vector3(0,0,-30), new Vector3(0,0,1),5);        //camera to use
+        Camera camera = new Camera(new Vector3(0,0,-80), new Vector3(0,0,1),10);        //camera to use
         for (int x = 0; x < output.getWidth(); x++) {
             //output done percentage
             System.out.println(" " + (int)((double)x / output.getWidth() * 100) + "% done");
@@ -31,12 +32,8 @@ public class RayTracer {
         }
         System.out.println(" 100% done");
         //save image
-        try {
-            output.saveImageJPG("output.jpg");
+      output.update();
             System.out.println("Saved Image");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
     }
 
@@ -46,6 +43,16 @@ public class RayTracer {
         world.addObject(new Sphere(new Vector3(0), 1.0, new Vector3(0.7,0.3,0.3)));
         world.addObject(new Sphere(new Vector3(0,2,0), 0.5, new Vector3(0.5)));
         world.addObject(new Sphere(new Vector3(3,0,0), 1.2, new Vector3(0.3,0.3,0.7)));
+
+        //random spheres
+        for (int i = 0; i < 10; i++) {
+            Vector3 position = Vector3.randomVector(-10,10);
+            Vector3 color = Vector3.randomVector(0.5,0.9);
+            double radius = (Math.random() * 3) + 1;
+            world.addObject(new Sphere(position,radius,color));
+
+        }
+
         return world;
     }
 

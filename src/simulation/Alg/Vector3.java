@@ -98,6 +98,13 @@ public class Vector3{
         return new Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
     }
 
+    //random components between min and max
+    //min inclusive, max exclusive
+    public static Vector3 randomVector(double min, double max){
+        double diff = max - min;
+        return new Vector3((Math.random() * diff)+min, (Math.random() * diff)+min, (Math.random() * diff)+min);
+    }
+
     //get random normalized direction
     public static Vector3 randomDirection(){
         return randomVector().normalized();
