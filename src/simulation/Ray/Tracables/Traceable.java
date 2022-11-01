@@ -8,4 +8,8 @@ import simulation.Ray.Ray;
 public interface Traceable {
     //trace a ray against the object, return the hit data
     HitData trace(Ray ray);
+
+    //get bounds
+    Vector3 getMin();
+    Vector3 getMax();
 }

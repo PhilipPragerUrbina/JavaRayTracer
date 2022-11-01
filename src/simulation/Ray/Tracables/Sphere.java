@@ -37,4 +37,14 @@ public class Sphere implements Traceable{
 
         return new HitData();
     }
+
+    @Override
+    public Vector3 getMin() {
+        return position.subtract(new Vector3(radius));
+    }
+
+    @Override
+    public Vector3 getMax() {
+        return position.add(new Vector3(radius));
+    }
 }
