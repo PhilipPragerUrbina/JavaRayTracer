@@ -39,6 +39,6 @@ public class Camera {
 
         //offset origin
         ray_position  =ray_position.add(position);
-        return new Ray(ray_position,ray_direction.normalized()); //simple camera for now
+        return new Ray(ray_position,ray_direction.normalized().add(Vector3.randomVector().divide(new Vector3(5000)))); //simple camera for now
     }
 }

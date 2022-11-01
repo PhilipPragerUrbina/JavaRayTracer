@@ -20,7 +20,6 @@ public class Sphere implements Traceable{
 
     @Override
     public HitData trace(Ray ray) {
-        HitData hit = new HitData();
 
         Vector3 oc = ray.getOrigin().subtract(position) ;
         double a = ray.getDirection().dot( ray.getDirection());
@@ -36,6 +35,6 @@ public class Sphere implements Traceable{
             return data;
         }
 
-        return hit;
+        return new HitData();
     }
 }

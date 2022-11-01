@@ -3,34 +3,55 @@ package simulation.Ray;
 import simulation.Alg.Vector3;
 import simulation.IO.Image;
 import simulation.IO.PixelDisplay;
+import simulation.Ray.Shader.Cell;
+import simulation.Ray.Shader.ShaderTask;
 import simulation.Ray.Tracables.Sphere;
-import simulation.Ray.Tracables.Traceable;
 import simulation.Ray.Tracables.TraceableWorld;
 
-import java.io.IOException;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 public class RayTracer {
-    final static int MAX_DEPTH = 10;
-    final static  int RESOLUTION = 1000;
+
+    final static  int RESOLUTION = 4000; //number of pixels for width of image
+    final static int NUM_CELLS = 10; //number of regions to split the image into
+    final static int NUM_THREADS = 8; //how many threads to process those regions
+
     public static void main(String[] args) {
 
         PixelDisplay output = new Image(RESOLUTION,RESOLUTION,"render.jpg");    //image to output to
         TraceableWorld world = getWorld(); //world to trace into
-        Camera camera = new Camera(new Vector3(0,0,-80), new Vector3(0,0,1),10);        //camera to use
-        for (int x = 0; x < output.getWidth(); x++) {
-            //output done percentage
-            System.out.println(" " + (int)((double)x / output.getWidth() * 100) + "% done");
+        Camera camera = new Camera(new Vector3(0,0,-80), new Vector3(0,0,1),50);        //camera to use
 
-            for (int y = 0; y < output.getHeight(); y++) {
-                //image shader
-                double w_x = ((double)x / (double)output.getWidth()); //convert the pixel values to double between 0 and 1
-                double w_y = ((double)y / (double)output.getHeight());
-                Ray r = camera.getRay(w_x, w_y); //get camera ray
-                Vector3 luminance = trace(world,r, 0);  //trace the ray
-                output.setPixel(x, y,luminance.abs().multiply(new Vector3(255))); //convert luminance to 255 color and set in image
-            }
+
+        //get regions
+        ArrayList<Cell> cells = new ArrayList<>();
+        for (int i = 0; i < NUM_CELLS; i++) {
+            cells.add(new Cell(i,NUM_CELLS,output));
         }
-        System.out.println(" 100% done");
+
+        //execute
+        ExecutorService pool = Executors.newFixedThreadPool(NUM_THREADS);
+        //add tasks
+        for (Cell cell : cells) {
+            pool.execute(new ShaderTask(world,camera,cell));
+        }
+
+        pool.shutdown(); //make the pool finish up
+        //sync the pool
+        try {
+            pool.awaitTermination(100000, TimeUnit.MILLISECONDS);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        //save region data
+        for (Cell cell : cells) {
+            cell.saveToDisplay();;
+        }
+
         //save image
       output.update();
             System.out.println("Saved Image");
@@ -45,7 +66,7 @@ public class RayTracer {
         world.addObject(new Sphere(new Vector3(3,0,0), 1.2, new Vector3(0.3,0.3,0.7)));
 
         //random spheres
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 100; i++) {
             Vector3 position = Vector3.randomVector(-10,10);
             Vector3 color = Vector3.randomVector(0.5,0.9);
             double radius = (Math.random() * 3) + 1;
@@ -56,22 +77,7 @@ public class RayTracer {
         return world;
     }
 
-    //trace a ray and return a color
-    private static Vector3 trace(TraceableWorld world, Ray r, int depth) {
-        depth++;
-        HitData data = world.trace(r);
-        if(depth > MAX_DEPTH){
-            return data.getLuminance();
-        }
-        if(data.didHit()){
-            Ray new_ray = new Ray(data.getHitPoint(r), r.getDirection().reflect(data.getSurface_normal()));
-            return   data.getLuminance().multiply(trace(world,new_ray, depth));
-        }
-        if(r.getDirection().y > 0.5){
-            return new Vector3(0.9); //light
-        }
-        return new Vector3(0.3,0.3,0.3); //return background
-    }
+
 
 
 }

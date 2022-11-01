@@ -19,7 +19,8 @@ public class HitData {
     }
 
     public boolean didHit(){
-        return  distance >0.0;
+
+        return  distance > 0;
     }
 
     public Vector3 getLuminance() {
