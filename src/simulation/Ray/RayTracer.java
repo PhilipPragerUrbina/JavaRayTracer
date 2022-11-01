@@ -15,23 +15,28 @@ import java.util.concurrent.TimeUnit;
 
 public class RayTracer {
 
-    final static  int RESOLUTION = 4000; //number of pixels for width of image
+    final static  int RESOLUTION = 1000; //number of pixels for width of image
     final static int NUM_CELLS = 10; //number of regions to split the image into
     final static int NUM_THREADS = 8; //how many threads to process those regions
 
     public static void main(String[] args) {
 
         PixelDisplay output = new Image(RESOLUTION,RESOLUTION,"render.jpg");    //image to output to
+        System.out.println("Initialized display adapter");
         TraceableWorld world = getWorld(); //world to trace into
-        Camera camera = new Camera(new Vector3(0,0,-80), new Vector3(0,0,1),50);        //camera to use
-
+        System.out.println("Generated World");
+        world.buildBVH(); //build acceleration structure
+        System.out.println("Built acceleration structure");
+        Camera camera = new Camera(new Vector3(0,-200,-600), new Vector3(0,0,1),600);        //camera to use
+        camera.setLookAt(new Vector3(0));
+        System.out.println("Created camera");
 
         //get regions
         ArrayList<Cell> cells = new ArrayList<>();
         for (int i = 0; i < NUM_CELLS; i++) {
             cells.add(new Cell(i,NUM_CELLS,output));
         }
-
+        System.out.println("Split cells");
         //execute
         ExecutorService pool = Executors.newFixedThreadPool(NUM_THREADS);
         //add tasks
@@ -47,10 +52,13 @@ public class RayTracer {
             e.printStackTrace();
         }
 
+        System.out.println("Finished render");
+
         //save region data
         for (Cell cell : cells) {
             cell.saveToDisplay();;
         }
+        System.out.println("Copied Data");
 
         //save image
       output.update();
@@ -66,8 +74,8 @@ public class RayTracer {
         world.addObject(new Sphere(new Vector3(3,0,0), 1.2, new Vector3(0.3,0.3,0.7)));
 
         //random spheres
-        for (int i = 0; i < 100; i++) {
-            Vector3 position = Vector3.randomVector(-10,10);
+        for (int i = 0; i < 10000; i++) {
+            Vector3 position = Vector3.randomVector(-200,200);
             Vector3 color = Vector3.randomVector(0.5,0.9);
             double radius = (Math.random() * 3) + 1;
             world.addObject(new Sphere(position,radius,color));

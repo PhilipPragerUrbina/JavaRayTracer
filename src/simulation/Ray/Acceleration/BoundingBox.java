@@ -1,7 +1,11 @@
 package simulation.Ray.Acceleration;
 
 import simulation.Alg.Vector3;
+import simulation.Ray.HitData;
 import simulation.Ray.Ray;
+import simulation.Ray.Tracables.Traceable;
+
+import java.util.ArrayList;
 
 public class BoundingBox {
     private Vector3 min;
@@ -11,6 +15,19 @@ public class BoundingBox {
     public BoundingBox(Vector3 min, Vector3 max){
         this.min = min;
         this.max = max;
+    }
+
+    //get a bounding box from a list of objects
+    public BoundingBox(ArrayList<Traceable> objects){
+        //initialize with first object
+        min = objects.get(0).getMin();
+        max = objects.get(0).getMax();
+
+        for (Traceable t : objects) {
+            //expand bounds
+            min = min.min(t.getMin());
+            max= max.max(t.getMax());
+        }
     }
 
     //ray intersection
@@ -70,6 +87,8 @@ public class BoundingBox {
     public Vector3 getMax() {
         return max;
     }
+
+
 
 
 }

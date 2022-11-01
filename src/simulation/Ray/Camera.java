@@ -17,6 +17,10 @@ public class Camera {
         this.fov = fov; //todo angle fov
     }
 
+    public void setLookAt(Vector3 at){
+        direction = at.subtract(position).normalized();
+    }
+
     //get a ray at a certain screen position(screen space to world space)
     //x and y should be between 0 and 1
     public Ray getRay(double x, double y){
@@ -39,6 +43,9 @@ public class Camera {
 
         //offset origin
         ray_position  =ray_position.add(position);
-        return new Ray(ray_position,ray_direction.normalized().add(Vector3.randomVector().divide(new Vector3(5000)))); //simple camera for now
+      //  return new Ray(ray_position,ray_direction.normalized().add(Vector3.randomVector().divide(new Vector3(5000)))); //simple camera for now
+        return new Ray(ray_position,ray_direction.normalized()); //simple camera for now
     }
+
+
 }

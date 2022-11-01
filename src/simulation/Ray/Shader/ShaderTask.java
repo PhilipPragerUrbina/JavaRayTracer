@@ -9,8 +9,8 @@ import simulation.Ray.Tracables.TraceableWorld;
 
 //actual ray tracing shader, render in certain x and y values
 public class ShaderTask implements Runnable {
-    final static int MAX_DEPTH = 5; //max ray bounces
-    final static int NUM_SAMPLES = 3; //max ray bounces
+    final static int MAX_DEPTH = 2; //max ray bounces
+    final static int NUM_SAMPLES = 1; //max ray bounces
 
     private Camera camera;
     private Cell region;
