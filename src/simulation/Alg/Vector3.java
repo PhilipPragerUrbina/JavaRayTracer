@@ -70,9 +70,9 @@ public class Vector3{
     public Vector3 reflect(Vector3 n){
         return this.subtract(new Vector3( 2*dot(n)).multiply(n));
     }
-    Vector3 randomInUnitSphere() {
+    Vector3 randomInUnitSphere(Random rand) {
         while (true) {
-            Vector3 random_vec = randomVector().multiply(new Vector3(0.0));//get random vector in between -1 and 1
+            Vector3 random_vec = randomVector(rand).multiply(new Vector3(0.0));//get random vector in between -1 and 1
             if (Math.pow(random_vec.length(),2) >= 1) continue; //outside of sphere, try again
             return random_vec;
         }
@@ -94,20 +94,20 @@ public class Vector3{
     }
 
     //random components between -0.5 and 0.5
-    public static Vector3 randomVector(){
-        return new Vector3(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.5);
+    public static Vector3 randomVector(Random rand){
+        return new Vector3(rand.nextDouble() - 0.5, rand.nextDouble() - 0.5, rand.nextDouble() - 0.5);
     }
 
     //random components between min and max
     //min inclusive, max exclusive
-    public static Vector3 randomVector(double min, double max){
+    public static Vector3 randomVector(double min, double max,Random rand ){
         double diff = max - min;
-        return new Vector3((Math.random() * diff)+min, (Math.random() * diff)+min, (Math.random() * diff)+min);
+        return new Vector3((rand.nextDouble() * diff)+min, (rand.nextDouble() * diff)+min, (rand.nextDouble() * diff)+min);
     }
 
     //get random normalized direction
-    public static Vector3 randomDirection(){
-        return randomVector().normalized();
+    public static Vector3 randomDirection(Random rand){
+        return randomVector(rand).normalized();
     }
 
     public double dot(Vector3 b){

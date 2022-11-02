@@ -7,7 +7,7 @@ public class Camera {
     private Vector3 position;
     private Vector3 direction;
     double fov;
-    Vector3 up = new Vector3(0,1,0); //y will be up
+    Vector3 up = new Vector3(0,-1,0); //y will be up
 
     //Create a camera at a position facing a direction. Also set its width and height in the world.
     //currently, fov is just how mich bigger the camera should be in units, not degrees or radians

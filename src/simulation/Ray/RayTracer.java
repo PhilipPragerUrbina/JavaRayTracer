@@ -3,32 +3,38 @@ package simulation.Ray;
 import simulation.Alg.Vector3;
 import simulation.IO.Image;
 import simulation.IO.PixelDisplay;
+import simulation.Ray.IO.OBJFile;
 import simulation.Ray.Shader.Cell;
 import simulation.Ray.Shader.ShaderTask;
 import simulation.Ray.Tracables.Sphere;
-import simulation.Ray.Tracables.TraceableWorld;
+import simulation.Ray.Tracables.Group;
+import simulation.Ray.Tracables.Traceable;
 
+import java.io.File;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 public class RayTracer {
 
-    final static  int RESOLUTION = 1000; //number of pixels for width of image
+    final static  int RESOLUTION = 5000; //number of pixels for width of image
     final static int NUM_CELLS = 10; //number of regions to split the image into
     final static int NUM_THREADS = 8; //how many threads to process those regions
 
     public static void main(String[] args) {
+        long start = System.nanoTime(); //time the execution
+ //todo lightmap
 
         PixelDisplay output = new Image(RESOLUTION,RESOLUTION,"render.jpg");    //image to output to
         System.out.println("Initialized display adapter");
-        TraceableWorld world = getWorld(); //world to trace into
+        Group world = getWorld(); //world to trace into
         System.out.println("Generated World");
         world.buildBVH(); //build acceleration structure
         System.out.println("Built acceleration structure");
-        Camera camera = new Camera(new Vector3(0,-200,-600), new Vector3(0,0,1),600);        //camera to use
-        camera.setLookAt(new Vector3(0));
+        Camera camera = new Camera(new Vector3(0,8,-20), new Vector3(0,0,1),10);        //camera to use
+        camera.setLookAt(new Vector3(0,2,0));
         System.out.println("Created camera");
 
         //get regions
@@ -47,7 +53,7 @@ public class RayTracer {
         pool.shutdown(); //make the pool finish up
         //sync the pool
         try {
-            pool.awaitTermination(100000, TimeUnit.MILLISECONDS);
+            pool.awaitTermination(10000000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -60,6 +66,9 @@ public class RayTracer {
         }
         System.out.println("Copied Data");
 
+        long spent = System.nanoTime() - start;;
+        System.out.println("Render finished in: " + TimeUnit.NANOSECONDS.toMillis(spent) + " ms");
+
         //save image
       output.update();
             System.out.println("Saved Image");
@@ -67,22 +76,35 @@ public class RayTracer {
     }
 
     //set up the world
-    private static TraceableWorld getWorld(){
-        TraceableWorld world = new  TraceableWorld();
-        world.addObject(new Sphere(new Vector3(0), 1.0, new Vector3(0.7,0.3,0.3)));
-        world.addObject(new Sphere(new Vector3(0,2,0), 0.5, new Vector3(0.5)));
-        world.addObject(new Sphere(new Vector3(3,0,0), 1.2, new Vector3(0.3,0.3,0.7)));
+    private static Group getWorld(){
+        /*
+       ArrayList<Traceable> objects = new ArrayList<>();
+        objects.add(new Sphere(new Vector3(0), 1.0, new Vector3(0.7,0.3,0.3)));
+        objects.add(new Sphere(new Vector3(0,2,0), 0.5, new Vector3(0.5)));
+        objects.add(new Sphere(new Vector3(3,0,0), 1.2, new Vector3(0.3,0.3,0.7)));
 
+        Random random = new Random(200); //fixed seed for testing
         //random spheres
         for (int i = 0; i < 10000; i++) {
-            Vector3 position = Vector3.randomVector(-200,200);
-            Vector3 color = Vector3.randomVector(0.5,0.9);
-            double radius = (Math.random() * 3) + 1;
-            world.addObject(new Sphere(position,radius,color));
+            Vector3 position = Vector3.randomVector(-200,200, random);
+            Vector3 color = Vector3.randomVector(0.5,0.9, random);
+            double radius = (random.nextDouble() * 3) + 1;
+            objects.add(new Sphere(position,radius,color));
 
-        }
+        }*/
 
-        return world;
+        ArrayList<Traceable> world = new ArrayList<>();
+        world.add(new Sphere(new Vector3(0,4,0), 1.0, new Vector3(0.7,0.3,0.3)));
+        world.add(new Sphere(new Vector3(5,2,0), 0.5, new Vector3(0.5)));
+        world.add(new Sphere(new Vector3(5,0,0), 1.2, new Vector3(0.3,0.3,0.7)));
+
+
+
+        OBJFile file = new OBJFile("test2.obj",1.0, true);
+        world.add(file.getScene());
+
+
+        return new Group(world);
     }
 
 

@@ -41,6 +41,7 @@ public class Node {
 
     //recursively check for hits
    public HitData hit(Ray r){
+        //todo closest first
         if(box.doesHit(r)){
             if(thing != null){
                 //leaf node
@@ -64,6 +65,7 @@ public class Node {
         }
         return new HitData();//did not hit
     }
+
 
     BoundingBox getBox(){
         return box;

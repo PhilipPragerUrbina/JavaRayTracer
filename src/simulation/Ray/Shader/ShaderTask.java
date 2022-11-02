@@ -1,11 +1,10 @@
 package simulation.Ray.Shader;
 
 import simulation.Alg.Vector3;
-import simulation.IO.PixelDisplay;
 import simulation.Ray.Camera;
 import simulation.Ray.HitData;
 import simulation.Ray.Ray;
-import simulation.Ray.Tracables.TraceableWorld;
+import simulation.Ray.Tracables.Group;
 
 //actual ray tracing shader, render in certain x and y values
 public class ShaderTask implements Runnable {
@@ -14,11 +13,11 @@ public class ShaderTask implements Runnable {
 
     private Camera camera;
     private Cell region;
-    private TraceableWorld world;
+    private Group world;
 
 
 
-    public ShaderTask( TraceableWorld world, Camera camera, Cell region ){
+    public ShaderTask(Group world, Camera camera, Cell region ){
         this.camera = camera;
         this.world = world;
         this.region = region;
@@ -43,7 +42,7 @@ public class ShaderTask implements Runnable {
     }
 
     //trace a ray and return a color
-    private static Vector3 trace(TraceableWorld world, Ray r, int depth) {
+    private static Vector3 trace(Group world, Ray r, int depth) {
         depth++;
         HitData data = world.trace(r);
 

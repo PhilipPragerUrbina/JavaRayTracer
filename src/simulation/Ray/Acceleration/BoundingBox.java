@@ -62,7 +62,7 @@ public class BoundingBox {
         double tzmin = (min.z - r.getOrigin().z) / r.getDirection().z;
         double tzmax = (max.z - r.getOrigin().z) / r.getDirection().z;
 
-        if (tzmin > tzmax) {
+        if (tzmin >tzmax) {
             double temporary = tzmin;
             tzmin = tzmax;
             tzmax = temporary;
@@ -79,6 +79,19 @@ public class BoundingBox {
 
         return true;
     }
+
+    //ray intersection with distance
+    public double hit(Ray r){
+        Vector3 tMin = (min.subtract(r.getOrigin())).divide( r.getDirection());
+        Vector3 tMax = (max.subtract(r.getOrigin())).divide( r.getDirection());
+        Vector3 t1 = tMin.min( tMax);
+        Vector3 t2 = tMin.max( tMax);
+        double tNear = Math.max(Math.max(t1.x, t1.y), t1.z);
+        double tFar = Math.min(Math.min(t2.x, t2.y), t2.z);
+        return tFar > Math.max(tNear, 0.0) ? tNear : -1;
+    }
+
+
 
     public Vector3 getMin() {
         return min;
