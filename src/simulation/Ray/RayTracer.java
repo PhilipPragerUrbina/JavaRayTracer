@@ -19,7 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RayTracer {
 
-    final static  int RESOLUTION = 5000; //number of pixels for width of image
+    final static  int RESOLUTION = 500; //number of pixels for width of image
     final static int NUM_CELLS = 10; //number of regions to split the image into
     final static int NUM_THREADS = 8; //how many threads to process those regions
 
@@ -100,8 +100,12 @@ public class RayTracer {
 
 
 
-        OBJFile file = new OBJFile("test2.obj",1.0, true);
-        world.add(file.getScene());
+        OBJFile file = new OBJFile("test.obj",1.0, true);
+        Traceable obj = file.getScene();;
+        world.add(obj);
+         ArrayList<Traceable> sub = new ArrayList<>();
+         sub.add(obj);
+        world.add(new Group(sub,new Vector3(-5,2,0)));
 
 
         return new Group(world);

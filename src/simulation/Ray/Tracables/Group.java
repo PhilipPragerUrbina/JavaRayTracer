@@ -45,11 +45,11 @@ public class Group implements Traceable {
 
     @Override
     public Vector3 getMin() {
-        return acceleration.getMin();
+        return acceleration.getMin().add(position);
     }
 
     @Override
     public Vector3 getMax() {
-        return acceleration.getMax();
+        return acceleration.getMax().add(position);
     }
 }
