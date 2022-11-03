@@ -6,6 +6,7 @@ import simulation.IO.PixelDisplay;
 import simulation.Ray.IO.OBJFile;
 import simulation.Ray.Shader.Cell;
 import simulation.Ray.Shader.ShaderTask;
+import simulation.Ray.Tracables.Instance;
 import simulation.Ray.Tracables.Sphere;
 import simulation.Ray.Tracables.Group;
 import simulation.Ray.Tracables.Traceable;
@@ -103,9 +104,11 @@ public class RayTracer {
         OBJFile file = new OBJFile("test.obj",1.0, true);
         Traceable obj = file.getScene();;
         world.add(obj);
-         ArrayList<Traceable> sub = new ArrayList<>();
-         sub.add(obj);
-        world.add(new Group(sub,new Vector3(-5,2,0)));
+
+        world.add(new Instance(obj, new Vector3(-5,0,0), new Vector3(1,1,1)));
+        world.add(new Instance(obj, new Vector3(-5,4,0), new Vector3(1.0,1.0,1.0)));
+        world.add(new Instance(obj, new Vector3(0,0,0), new Vector3(2,2,2)));
+
 
 
         return new Group(world);

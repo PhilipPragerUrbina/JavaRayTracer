@@ -7,24 +7,16 @@ import simulation.Ray.Ray;
 
 import java.util.ArrayList;
 // a bunch of traceable that are part of a common object that can be traced
-//each group can be instanced into a different position, and has it's own bvh
-//groups can and should be nested
+//Is a traceable object, can be instanced, can be nested
+//Use lots of these, help BVH be more efficient, since it contains its own sub bvh
 public class Group implements Traceable {
     private ArrayList<Traceable> objects;
     private BVH acceleration;
-    private Vector3 position;
 
-
-    //create a group of objects, and build its acceleration structure. Can be offset into a position
-    public Group(ArrayList<Traceable> objects, Vector3 position){
-        this.position = position;
+    //create a group of objects, and build its acceleration structure.
+    public Group(ArrayList<Traceable> objects){
         this.objects = objects;
         buildBVH();
-    }
-
-    //create a group of objects, and build its acceleration structure. is at origin.
-    public Group(ArrayList<Traceable> objects){
-        this(objects,new Vector3());
     }
 
     //re-build the acceleration structure
@@ -32,24 +24,19 @@ public class Group implements Traceable {
         acceleration = new BVH(objects);
     }
 
-
-
     //trace a ray against all possible objects and return data
     @Override
     public  HitData trace(Ray ray){
-        //offset ray to offset whole group's position
-        Ray offset_ray = new Ray(ray.getOrigin().subtract(position), ray.getDirection());
-
-            return acceleration.trace(offset_ray);
+            return acceleration.trace(ray);
     }
 
     @Override
     public Vector3 getMin() {
-        return acceleration.getMin().add(position);
+        return acceleration.getMin();
     }
 
     @Override
     public Vector3 getMax() {
-        return acceleration.getMax().add(position);
+        return acceleration.getMax();
     }
 }

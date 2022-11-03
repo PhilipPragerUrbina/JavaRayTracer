@@ -47,5 +47,14 @@ public class Camera {
         return new Ray(ray_position,ray_direction.normalized()); //simple camera for now
     }
 
+    public Vector3 getPosition() {
+        return position;
+    }
+
+    public Vector3 getDirection() {
+        return direction;
+    }
+
+
 
 }
