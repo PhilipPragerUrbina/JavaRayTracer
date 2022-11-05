@@ -20,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 
 public class RayTracer {
 
-    final static  int RESOLUTION = 500; //number of pixels for width of image
+    final static  int RESOLUTION = 1000; //number of pixels for width of image
     final static int NUM_CELLS = 10; //number of regions to split the image into
     final static int NUM_THREADS = 8; //how many threads to process those regions
 
@@ -34,7 +34,7 @@ public class RayTracer {
         System.out.println("Generated World");
         world.buildBVH(); //build acceleration structure
         System.out.println("Built acceleration structure");
-        Camera camera = new Camera(new Vector3(0,8,-20), new Vector3(0,0,1),10);        //camera to use
+        Camera camera = new Camera(new Vector3(40,8,-20), new Vector3(0,0,1),10);        //camera to use
         camera.setLookAt(new Vector3(0,2,0));
         System.out.println("Created camera");
 
@@ -54,7 +54,7 @@ public class RayTracer {
         pool.shutdown(); //make the pool finish up
         //sync the pool
         try {
-            pool.awaitTermination(10000000, TimeUnit.MILLISECONDS);
+            pool.awaitTermination(100000000, TimeUnit.MILLISECONDS);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -105,11 +105,19 @@ public class RayTracer {
         Traceable obj = file.getScene();;
         world.add(obj);
 
-        world.add(new Instance(obj, new Vector3(-5,0,0), new Vector3(1,1,1)));
-        world.add(new Instance(obj, new Vector3(-5,4,0), new Vector3(1.0,1.0,1.0)));
-        world.add(new Instance(obj, new Vector3(0,0,0), new Vector3(2,2,2)));
+        Random random = new Random(200); //fixed seed for testing
 
+    //    for (int i = 0; i < 100; i++) {
+     //       Vector3 position = Vector3.randomVector(-10,10, random).add(new Vector3(0,0,10));
+       //     world.add(new Instance(obj, position));
 
+     //   }
+
+       // world.add(new Instance(obj, new Vector3(-5,0,0)));
+      //  world.add(new Instance(obj, new Vector3(-5,4,0)));
+      //  world.add(new Instance(obj, new Vector3(0,0,0)));
+
+        world.add(obj);
 
         return new Group(world);
     }

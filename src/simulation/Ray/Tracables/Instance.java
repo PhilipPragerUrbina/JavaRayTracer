@@ -14,19 +14,14 @@ import java.util.ArrayList;
 public class Instance implements Traceable {
     private Traceable object;
     private Vector3 position;
-    private Vector3 scale;
 
     //Create instance that can scale and translate
-    public Instance(Traceable object, Vector3 position, Vector3 scale){
+    public Instance(Traceable object, Vector3 position){
         this.position = position;
-        this.scale = scale;
         this.object = object;
     }
 
-    //create instance with only position offset
-    public Instance(Traceable object, Vector3 position){
-        this(object,position,new Vector3(1));
-    }
+
 
 
 
@@ -35,19 +30,19 @@ public class Instance implements Traceable {
     public  HitData trace(Ray ray){
         //todo fix scaling, not occluding correctly
         //offset ray to offset object's position and scale without changing the object itself
-        Ray offset_ray = new Ray(ray.getOrigin().subtract(position).divide(scale), ray.getDirection());
+        Ray offset_ray = new Ray(ray.getOrigin().subtract(position), ray.getDirection());
         return object.trace(offset_ray);
     }
 
     //pass through min and max, but offset and dilate
     @Override
     public Vector3 getMin() {
-        return object.getMin().multiply(scale).add(position);
+        return object.getMin().add(position);
     }
 
     @Override
     public Vector3 getMax() {
-        return object.getMax().multiply(scale).add(position);
+        return object.getMax().add(position);
     }
 
 }
